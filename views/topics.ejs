@@ -26,8 +26,6 @@
         font-family: "Roboto", sans-serif;
         background: linear-gradient(135deg, #2b2b2b, #505050);
         color: #fff;
-        margin: 0;
-        padding: 0;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -161,6 +159,11 @@
           align-items: flex-start;
         }
       }
+
+      .navigation {
+        display: flex;
+        flex-direction: row;
+      }
     </style>
   </head>
   <body>
@@ -181,10 +184,10 @@
       </form>
       <div class="navigation">
         <button class="btn-nav" id="prev-button" disabled>
-          <i class="fas fa-arrow-left"></i> Previous
+          <i class="fas fa-arrow-left"></i>
         </button>
         <button class="btn-nav" id="next-button">
-          Next <i class="fas fa-arrow-right"></i>
+          <i class="fas fa-arrow-right"></i>
         </button>
       </div>
       <% } else { %>
