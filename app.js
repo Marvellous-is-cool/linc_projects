@@ -1,11 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
+const favicon = require("serve-favicon");
+const path = require("path");
 const app = express();
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+// Use serve-favicon middleware
+app.use(favicon(path.join(__dirname, "public/images/", "favicon.ico")));
 
 // Database connection
 const db = mysql.createConnection({
@@ -28,24 +33,74 @@ app.get("/", (req, res) => {
 app.post("/name", (req, res) => {
   const name = req.body.name;
 
-  // Check if the name already exists in the database
+  // Check if the name already exists in the users table
   db.query(
     "SELECT COUNT(*) as count FROM users WHERE name = ?",
     [name],
-    (err, results) => {
+    (err, userResults) => {
       if (err) throw err;
 
-      if (results[0].count > 0) {
-        // Name already exists
-        res.render("index", {
-          error: "This name is already taken. Please choose a different one.",
-        });
+      if (userResults[0].count > 0) {
+        // Name exists in the users table, check topic tables
+        db.query(
+          `SELECT COUNT(*) as count FROM linguistics_topics WHERE assigned_to = ?
+           UNION
+           SELECT COUNT(*) as count FROM communication_topics WHERE assigned_to = ?
+           UNION
+           SELECT COUNT(*) as count FROM integrated_topics WHERE assigned_to = ?`,
+          [name, name, name],
+          (err, topicResults) => {
+            if (err) throw err;
+
+            // Sum up the counts from the three queries
+            const totalAssigned = topicResults.reduce(
+              (total, row) => total + row.count,
+              0
+            );
+
+            if (totalAssigned > 0) {
+              // Name is assigned to at least one topic
+              res.render("index", {
+                error: "The user already exists and has selected a topic.",
+              });
+            } else {
+              // Name exists in users table but not in any topic tables
+              res.render("selection", { name });
+            }
+          }
+        );
       } else {
-        // Insert the new name into the database
-        db.query("INSERT INTO users (name) VALUES (?)", [name], (err) => {
-          if (err) throw err;
-          res.render("selection", { name });
-        });
+        // Name does not exist in the users table, check topic tables
+        db.query(
+          `SELECT COUNT(*) as count FROM linguistics_topics WHERE assigned_to = ?
+           UNION
+           SELECT COUNT(*) as count FROM communication_topics WHERE assigned_to = ?
+           UNION
+           SELECT COUNT(*) as count FROM integrated_topics WHERE assigned_to = ?`,
+          [name, name, name],
+          (err, topicResults) => {
+            if (err) throw err;
+
+            // Sum up the counts from the three queries
+            const totalAssigned = topicResults.reduce(
+              (total, row) => total + row.count,
+              0
+            );
+
+            if (totalAssigned > 0) {
+              // Name is in topic tables
+              res.render("index", {
+                error: "The user already exists and has selected a topic.",
+              });
+            } else {
+              // Name does not exist in either users or topic tables, insert it
+              db.query("INSERT INTO users (name) VALUES (?)", [name], (err) => {
+                if (err) throw err;
+                res.render("selection", { name });
+              });
+            }
+          }
+        );
       }
     }
   );
