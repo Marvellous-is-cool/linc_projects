@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LINC Project Topics</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include('header') %>
+    <div class="container animate__animated animate__fadeIn">
+      <div class="hero-section">
+        <h1 class="hero-title">Welcome to <span>LINC Project Topics</span></h1>
+        <p class="hero-subtitle">Select and claim your topics with ease</p>
+      </div>
+
+      <form
+        action="/name"
+        method="post"
+        class="form animate__animated animate__zoomIn"
+      >
+        <div class="form-group">
+          <label for="name" class="form-label">Enter your name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-input"
+            required
+            placeholder="Your name"
+          />
+          <% if (typeof error !== 'undefined') { %>
+          <div class="error-message" style="color: rgb(187, 60, 60)">
+            <%= error %>
+          </div>
+          <% } %>
+        </div>
+        <button type="submit" class="btn-submit">
+          Next <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+      <br />
+      <i>Made by Coolbuoy for the FAM!</i>
+    </div>
+
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(135deg, #1c1c1c, #343434);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        text-align: center;
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .hero-section {
+        margin-bottom: 20px;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .hero-title span {
+        color: #00d9ff;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+        color: #ccc;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-label {
+        font-size: 1rem;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        outline: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+
+      .form-input::placeholder {
+        color: #ccc;
+      }
+
+      .btn-submit {
+        display: inline-block;
+        background-color: #00d9ff;
+        color: #1c1c1c;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-submit:hover {
+        background-color: #00b3e3;
+      }
+
+      .btn-submit i {
+        margin-left: 10px;
+      }
+    </style>
+  </body>
+</html>

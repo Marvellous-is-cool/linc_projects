@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Available Topics</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(135deg, #2b2b2b, #505050);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      .container {
+        text-align: center;
+        width: 100%;
+        max-width: 600px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .title {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+
+      .subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+      }
+
+      .topic-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .topic-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .topic-text {
+        font-size: 1.2rem;
+        font-weight: 500;
+        flex-grow: 1;
+        text-align: left;
+      }
+
+      .claim-form {
+        margin: 0;
+      }
+
+      .btn-claim {
+        background-color: #00d9ff;
+        color: #2b2b2b;
+        padding: 8px 15px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: inline-flex;
+        align-items: center;
+        margin: 10px 0;
+      }
+
+      .btn-claim i {
+        margin-left: 8px;
+      }
+
+      .btn-claim:hover {
+        background-color: #00b3e3;
+      }
+
+      .no-topics {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+      }
+
+      .btn-back,
+      .btn-nav {
+        display: inline-block;
+        background-color: #00d9ff;
+        color: #2b2b2b;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        margin: 5px;
+      }
+
+      .btn-back i,
+      .btn-nav i {
+        margin-right: 8px;
+      }
+
+      .btn-back:hover,
+      .btn-nav:hover {
+        background-color: #00b3e3;
+      }
+
+      @media (max-width: 600px) {
+        .title {
+          font-size: 2rem;
+        }
+
+        .subtitle {
+          font-size: 1.2rem;
+        }
+
+        .topic-text {
+          font-size: 1rem;
+        }
+
+        .btn-claim,
+        .btn-back,
+        .btn-nav {
+          width: 100%;
+          padding: 10px;
+          font-size: 1.1rem;
+        }
+
+        .topic-item {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('header') %>
+    <div class="container animate__animated animate__fadeIn">
+      <h1 class="title">Available Topics</h1>
+      <h2 class="subtitle">Hello, <%= name %>!</h2>
+
+      <% if (topics.length > 0) { %>
+      <form id="claim-form" action="/claim" method="post">
+        <ul class="topic-list" id="topic-list">
+          <!-- Topics will be dynamically inserted here -->
+        </ul>
+        <input type="hidden" name="name" value="<%= name %>" />
+        <button type="submit" id="claim-button" class="btn-claim" disabled>
+          Claim Selected Topics <i class="fas fa-check-circle"></i>
+        </button>
+      </form>
+      <div class="navigation">
+        <button class="btn-nav" id="prev-button" disabled>
+          <i class="fas fa-arrow-left"></i> Previous
+        </button>
+        <button class="btn-nav" id="next-button">
+          Next <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+      <% } else { %>
+      <p class="no-topics">No topics available for your selection.</p>
+      <% } %>
+
+      <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> Go Back</a>
+    </div>
+
+    <%- include('footer') %>
+
+    <script>
+      const topics = <%- JSON.stringify(topics) %>;
+      let currentPage = 0;
+      const topicsPerPage = 5;
+
+      function renderTopics() {
+          const topicList = document.getElementById("topic-list");
+          topicList.innerHTML = "";
+          const start = currentPage * topicsPerPage;
+          const end = Math.min(start + topicsPerPage, topics.length);
+          for (let i = start; i < end; i++) {
+              const topicItem = document.createElement("li");
+              topicItem.className = "topic-item";
+              topicItem.innerHTML = `
+                  <label class="topic-text">
+                      <input
+                          type="checkbox"
+                          name="topics"
+                          value="${topics[i].id}"
+                          class="topic-checkbox"
+                          onchange="limitSelection(this)"
+                      />
+                      ${topics[i].topic}
+                  </label>
+              `;
+              topicList.appendChild(topicItem);
+          }
+          document.getElementById("prev-button").disabled = currentPage === 0;
+          document.getElementById("next-button").disabled =
+              end >= topics.length;
+      }
+
+      document.getElementById("prev-button").addEventListener("click", () => {
+          if (currentPage > 0) {
+              currentPage--;
+              renderTopics();
+          }
+      });
+
+      document.getElementById("next-button").addEventListener("click", () => {
+          if ((currentPage + 1) * topicsPerPage < topics.length) {
+              currentPage++;
+              renderTopics();
+          }
+      });
+
+      function limitSelection(checkbox) {
+          const checkboxes = document.querySelectorAll(".topic-checkbox");
+          const checkedCount = document.querySelectorAll(
+              ".topic-checkbox:checked"
+          ).length;
+          const claimButton = document.getElementById("claim-button");
+
+          if (checkedCount > 2) {
+              checkbox.checked = false;
+              alert("You can select up to two topics.");
+          }
+
+          claimButton.disabled = checkedCount === 0;
+          saveSelectedTopics();
+      }
+
+      function saveSelectedTopics() {
+          const selectedTopics = Array.from(
+              document.querySelectorAll(".topic-checkbox:checked")
+          ).map((cb) => cb.value);
+          localStorage.setItem("selectedTopics", JSON.stringify(selectedTopics));
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+          const savedTopics = JSON.parse(
+              localStorage.getItem("selectedTopics") || "[]"
+          );
+          document.querySelectorAll(".topic-checkbox").forEach((cb) => {
+              if (savedTopics.includes(cb.value)) {
+                  cb.checked = true;
+              }
+          });
+          renderTopics();
+      });
+
+      // Handle form submission
+      document
+          .getElementById("claim-form")
+          .addEventListener("submit", function (event) {
+              const selectedTopics = Array.from(
+                  document.querySelectorAll(".topic-checkbox:checked")
+              ).map((cb) => cb.value);
+
+              if (selectedTopics.length > 0) {
+                  event.preventDefault();
+                  localStorage.setItem(
+                      "selectedTopics",
+                      JSON.stringify(selectedTopics)
+                  );
+                  window.location.href = `/claim?name=<%= name %>&topics=${selectedTopics.join(
+                      ","
+                  )}`;
+              } else {
+                  alert("Please select at least one topic.");
+              }
+          });
+    </script>
+  </body>
+</html>
