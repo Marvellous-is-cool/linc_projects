@@ -9,20 +9,12 @@ app.use(express.static("public"));
 
 // Database connection
 const db = mysql.createConnection({
-  host: process.env.db_host || "localhost",
-  user: process.env.db_user || "root",
-  password: process.env.db_pass || "",
-  port: process.env.dbPORT || "",
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASS || "",
+  port: process.env.DB_PORT || "",
   database: "linc_project_topics",
 });
-
-// const db = mysql.createConnection({
-//   host: "mysql-180220-0.cloudclusters.net",
-//   user: "admin",
-//   password: "DnHprXgG",
-//   port: "19362",
-//   database: "linc_project_topics",
-// });
 
 db.connect((err) => {
   if (err) throw err;
